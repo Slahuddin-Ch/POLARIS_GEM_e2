@@ -1,0 +1,4 @@
+<launch>
+  <param name="critical_battery_level" value="50.0"/>
+  <node pkg="battery_simulation" type="battery_simulator" name="battery_simulator" output="screen"/>
+</launch>
