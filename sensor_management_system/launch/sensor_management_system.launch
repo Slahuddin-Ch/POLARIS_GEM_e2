@@ -1,0 +1,3 @@
+<launch>
+    <node name="sensor_manager_node" pkg="sensor_management_system" type="sensor_manager_node" output="screen" />
+</launch>
