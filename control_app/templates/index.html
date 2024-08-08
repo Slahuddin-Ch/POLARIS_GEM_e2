@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 80%;
+            max-width: 1200px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .section {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .button-group {
+            margin: 20px 0;
+        }
+        .button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s ease;
+            width: 100%; /* Full width for buttons */
+            box-sizing: border-box;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .control-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .button.emergency-stop {
+            background-color: red;
+        }
+        .button.emergency-stop:hover {
+            background-color: darkred;
+        }
+        .button.start {
+            background-color: green;
+        }
+        .button.start:hover {
+            background-color: darkgreen;
+        }
+        .mode-selection {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .mode-selection label {
+            font-weight: normal;
+            margin-right: 15px;
+        }
+        .joystick {
+            display: grid;
+            grid-template-rows: repeat(3, 50px);
+            grid-template-columns: repeat(3, 50px);
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+        .joystick .button {
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            padding: 0;
+        }
+        .joystick .empty {
+            background-color: transparent;
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section">
+            <h1>Device Data Input</h1>
+            
+            <div class="input-group">
+                <label for="temperature">Temperature:</label>
+                <input type="number" id="temperature" name="temperature" min="0" oninput="validateInput(this)">
+            </div>
+            
+            <div class="input-group">
+                <label for="battery">Battery Level:</label>
+                <input type="number" id="battery" name="battery" min="0" oninput="validateInput(this)">
+            </div>
+            
+            <div class="input-group">
+                <label for="gps_accuracy">GPS Accuracy:</label>
+                <input type="number" id="gps_accuracy" name="gps_accuracy" min="0" oninput="validateInput(this)">
+            </div>
+            
+            <div class="input-group">
+                <label for="signal_strength">Signal Strength:</label>
+                <input type="number" id="signal_strength" name="signal_strength" min="0" oninput="validateInput(this)">
+            </div>
+            
+            <button class="button" onclick="sendData()">Send Data</button>
+        </div>
+        
+        <div class="section">
+            <h1>Control Buttons</h1>
+            
+            <div class="mode-selection">
+                <label>
+                    <input type="radio" name="mode" value="manual" checked onchange="sendModeChange(this)"> Manual
+                </label>
+                <label>
+                    <input type="radio" name="mode" value="automatic" onchange="sendModeChange(this)"> Automatic
+                </label>
+            </div>
+
+            <div class="joystick">
+                <button class="button empty"></button>
+                <button class="button" onclick="sendButtonRequest('forward')">↑</button>
+                <button class="button empty"></button>
+                <button class="button" onclick="sendButtonRequest('left')">←</button>
+                <button class="button empty"></button>
+                <button class="button" onclick="sendButtonRequest('right')">→</button>
+                <button class="button empty"></button>
+                <button class="button" onclick="sendButtonRequest('backward')">↓</button>
+                <button class="button empty"></button>
+            </div>
+
+            <div class="button-group control-buttons">
+                <button class="button" onclick="sendButtonRequest('scenario1')">Scenario 1</button>
+                <button class="button" onclick="sendButtonRequest('scenario2')">Scenario 2</button>
+                <button class="button" onclick="sendButtonRequest('scenario3')">Scenario 3</button>
+                <button class="button" onclick="sendButtonRequest('scenario4')">Scenario 4</button>
+                <button class="button" onclick="sendButtonRequest('scenario5')">Scenario 5</button>
+            </div>
+
+            <div class="button-group control-buttons">
+                <button class="button emergency-stop" onclick="sendButtonRequest('emergency_stop')">Emergency Stop</button>
+                <button class="button start" onclick="sendButtonRequest('start')">Start</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function validateInput(input) {
+            if (input.value < 0) {
+                input.value = 0;
+            }
+        }
+
+        function sendData() {
+            const temperature = document.getElementById('temperature').value;
+            const battery = document.getElementById('battery').value;
+            const gpsAccuracy = document.getElementById('gps_accuracy').value;
+            const signalStrength = document.getElementById('signal_strength').value;
+
+            const data = {
+                temperature: temperature,
+                battery: battery,
+                gps_accuracy: gpsAccuracy,
+                signal_strength: signalStrength
+            };
+
+            fetch('/data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+            });
+        }
+
+        function sendButtonRequest(buttonId) {
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            fetch('/button', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ button_id: buttonId, mode: mode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+            });
+        }
+
+        function sendModeChange(radio) {
+            const mode = radio.value;
+            fetch('/mode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ mode: mode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+            });
+        }
+    </script>
+</body>
+</html>
