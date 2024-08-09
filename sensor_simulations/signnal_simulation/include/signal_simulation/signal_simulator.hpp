@@ -2,7 +2,7 @@
 #define SIGNAL_SIMULATOR_HPP
 
 #include <ros/ros.h>
-#include <std_msgs/Int32.h>
+#include <std_msgs/Float32.h>
 #include <thread>
 #include <atomic>
 
@@ -12,8 +12,8 @@ public:
 
     void startSimulation();
     void stopSimulation();
-    void setSignalStrength(int strength);
-    int getSignalStrength() const;
+    void setSignalStrength(float strength);
+    float getSignalStrength() const;
 
 private:
     void simulateSignalStrength();
@@ -21,7 +21,7 @@ private:
 
     ros::NodeHandle nh_;
     ros::Publisher signal_strength_pub_;
-    std::atomic<int> current_signal_strength_;
+    std::atomic<float> current_signal_strength_;
     std::atomic<bool> is_running_;
     std::thread simulation_thread_;
 };

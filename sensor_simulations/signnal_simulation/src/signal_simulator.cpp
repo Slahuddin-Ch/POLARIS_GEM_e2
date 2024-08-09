@@ -3,7 +3,7 @@
 
 SignalSimulator::SignalSimulator()
     : current_signal_strength_(1), is_running_(false) {
-    signal_strength_pub_ = nh_.advertise<std_msgs::Int32>("signal_strength", 10);
+    signal_strength_pub_ = nh_.advertise<std_msgs::Float32>("signal_strength", 10);
     ROS_INFO("SignalSimulator initialized with default signal strength: %d", current_signal_strength_.load());
 }
 
@@ -19,12 +19,12 @@ void SignalSimulator::stopSimulation() {
     }
 }
 
-void SignalSimulator::setSignalStrength(int strength) {
+void SignalSimulator::setSignalStrength(float strength) {
     current_signal_strength_ = strength;
-    ROS_INFO("Signal strength set to: %d", current_signal_strength_.load());
+    ROS_INFO("Signal strength set to: %f", current_signal_strength_.load());
 }
 
-int SignalSimulator::getSignalStrength() const {
+float SignalSimulator::getSignalStrength() const {
     return current_signal_strength_.load();
 }
 
@@ -37,10 +37,10 @@ void SignalSimulator::simulateSignalStrength() {
 }
 
 void SignalSimulator::publishSignalStrength() {
-    std_msgs::Int32 msg;
+    std_msgs::Float32 msg;
     msg.data = current_signal_strength_.load();
     signal_strength_pub_.publish(msg);
-    ROS_INFO("Published signal strength: %d", msg.data);
+    ROS_INFO("Published signal strength: %f", msg.data);
 
     if (msg.data == 0) {
         ROS_WARN("No signal detected!");

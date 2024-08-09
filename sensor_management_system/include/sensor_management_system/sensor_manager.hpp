@@ -19,7 +19,7 @@ private:
     void batteryCallback(const std_msgs::Float32::ConstPtr& msg);
     void temperatureCallback(const std_msgs::Float32::ConstPtr& msg);
     void gpsAccuracyCallback(const std_msgs::Float32::ConstPtr& msg);
-    void signalStrengthCallback(const std_msgs::Int32::ConstPtr& msg);
+    void signalStrengthCallback(const std_msgs::Float32::ConstPtr& msg);
     void emergencyStopCallback(const std_msgs::Bool::ConstPtr& msg);
 
     void publishRobotState();
@@ -35,7 +35,7 @@ private:
     std::atomic<float> battery_level_;
     std::atomic<float> temperature_;
     std::atomic<float> gps_accuracy_;
-    std::atomic<int> signal_strength_;
+    std::atomic<float> signal_strength_;
     std::atomic<bool> emergency_stop_;
 
     std::atomic<bool> is_running_;

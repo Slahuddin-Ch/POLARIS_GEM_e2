@@ -40,9 +40,9 @@ void SensorManager::gpsAccuracyCallback(const std_msgs::Float32::ConstPtr& msg) 
     ROS_INFO("GPS accuracy updated: %.2f", gps_accuracy_.load());
 }
 
-void SensorManager::signalStrengthCallback(const std_msgs::Int32::ConstPtr& msg) {
+void SensorManager::signalStrengthCallback(const std_msgs::Float32::ConstPtr& msg) {
     signal_strength_ = msg->data;
-    ROS_INFO("Signal strength updated: %d", signal_strength_.load());
+    ROS_INFO("Signal strength updated: %f", signal_strength_.load());
 }
 
 void SensorManager::emergencyStopCallback(const std_msgs::Bool::ConstPtr& msg) {

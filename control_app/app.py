@@ -1,17 +1,18 @@
 from flask import Flask, request, jsonify, render_template
 import rospy
-from std_msgs.msg import Int32, Float32, String
+from std_msgs.msg import Int32, Float32, String, Bool
 
 app = Flask(__name__)
 
 # Initialize ROS node
 rospy.init_node('flask_ros_publisher', anonymous=True)
 button_pub = rospy.Publisher('button_topic', String, queue_size=10)
-temperature_pub = rospy.Publisher('temperature_topic', Float32, queue_size=10)
-battery_pub = rospy.Publisher('battery_topic', Float32, queue_size=10)
-gps_accuracy_pub = rospy.Publisher('gps_accuracy_topic', Float32, queue_size=10)
-signal_strength_pub = rospy.Publisher('signal_strength_topic', Float32, queue_size=10)
+temperature_pub = rospy.Publisher('temperature', Float32, queue_size=10)
+battery_pub = rospy.Publisher('battery_level', Float32, queue_size=10)
+gps_accuracy_pub = rospy.Publisher('gps_accuracy', Float32, queue_size=10)
+signal_strength_pub = rospy.Publisher('signal_strength', Float32, queue_size=10)
 mode_pub = rospy.Publisher('mode_topic', String, queue_size=10)
+stop_pub = rospy.Publisher('emergency_stop', Bool, queue_size=10)
 
 @app.route('/')
 def home():
@@ -24,7 +25,17 @@ def button():
     mode = data.get('mode')
     # Publish button ID and mode to ROS topic
     rospy.loginfo(f"Button {button_id} pressed in {mode} mode")
-    button_pub.publish(f"{button_id}_{mode}")
+
+    if (button_id == "emergency_stop"):
+        stop_pub.publish(True)
+    if (button_id == "start"):
+        stop_pub.publish(False)
+
+
+    button_pub.publish(f"{button_id}")
+
+
+
     # Return a JSON response
     return jsonify({"message": f"Button {button_id} in {mode} mode response received"})
 
